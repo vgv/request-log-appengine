@@ -1,0 +1,15 @@
+<ivy-module version="2.0">
+	<info organisation="vgv" module="request-log-appengine"/>
+
+	<dependencies>
+		<!-- Google libs -->
+		<dependency org="com.google.guava" name="guava" rev="12.0" transitive="false"/>
+		<dependency org="com.google.code.gson" name="gson" rev="2.2.1" transitive="false"/>
+
+		<!-- TestNG -->
+		<dependency org="org.mockito" name="mockito-all" rev="1.8.5" transitive="false"/>
+		<dependency org="org.testng" name="testng" rev="6.2" transitive="false"/>
+		<dependency org="com.beust" name="jcommander" rev="1.12" transitive="false"/>
+		<dependency org="org.beanshell" name="bsh" rev="2.0b4" transitive="false"/>
+	</dependencies>
+</ivy-module>

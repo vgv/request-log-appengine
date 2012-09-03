@@ -1,0 +1,114 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="request-lib-appengine">
+
+    <import file="build/common.xml"/>
+
+    <path id="compile-classpath">
+        <fileset dir="lib/jar" includes="**/*.jar"/>
+
+        <fileset dir="${appengine.dir}/lib">
+            <include name="shared/**/*.jar"/>
+            <include name="user/**/*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test-compile-classpath">
+        <path refid="compile-classpath"/>
+        <pathelement location="output/classes"/>
+    </path>
+
+    <path id="test-run-classpath">
+        <path refid="test-compile-classpath"/>
+        <pathelement location="output/test-classes"/>
+        <pathelement location="src/test/resources"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="output"/>
+        <delete dir="dist"/>
+    </target>
+
+    <target name="download-lib">
+        <ivy-retrieve/>
+    </target>
+
+    <target name="compile" depends="download-lib">
+        <java-compile
+                srcdir="src/main/java"
+                destdir="output/classes"
+                classpathref="compile-classpath"/>
+    </target>
+
+    <target name="compile-test" depends="compile">
+        <java-compile
+                srcdir="src/test/java"
+                destdir="output/test-classes"
+                classpathref="test-compile-classpath"/>
+    </target>
+
+    <target name="run-gae-server" depends="compile" description="Run GAE dev server">
+        <!-- Соберем dev-war -->
+        <mkdir dir="output/gae-dev-war"/>
+
+        <!-- -->
+        <copy todir="output/gae-dev-war/WEB-INF/lib" flatten="true">
+            <fileset dir="${appengine.dir}/lib/user">
+                <include name="**/*.jar"/>
+            </fileset>
+            <fileset dir="lib/jar" />
+        </copy>
+
+        <copy todir="output/gae-dev-war/WEB-INF/classes">
+            <fileset dir="output/classes"/>
+            <fileset dir="src/main/java">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+
+        <copy todir="output/gae-dev-war/WEB-INF">
+            <fileset dir="src/main/webapp/WEB-INF"/>
+        </copy>
+
+         <dev_appserver war="output/gae-dev-war"/>
+    </target>
+
+    <target name="test" depends="compile-test">
+        <test-run/>
+    </target>
+
+    <target name="dist" depends="clean, compile">
+        <!-- Соберем dev-war -->
+        <mkdir dir="dist"/>
+
+        <!-- -->
+        <copy todir="dist/WEB-INF/lib" flatten="true">
+            <fileset dir="${appengine.dir}/lib/user">
+                <include name="**/*.jar"/>
+            </fileset>
+            <fileset dir="lib/jar" />
+        </copy>
+
+        <copy todir="dist/WEB-INF/classes">
+            <fileset dir="output/classes"/>
+            <fileset dir="src/main/java">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+
+        <copy todir="dist/WEB-INF">
+            <fileset dir="src/main/webapp/WEB-INF"/>
+        </copy>
+    </target>
+
+    <target name="gae_deploy" depends="dist" description="Uploads the application to App Engine">
+        <appcfg action="update" war="dist"/>
+    </target>
+
+    <target name="gae_rollback" depends="dist" description="Uploads the application to App Engine">
+        <appcfg action="rollback" war="dist"/>
+    </target>
+
+    <target name="gae_vacuum_indexes" depends="dist" description="Uploads the application to App Engine">
+        <appcfg action="vacuum_indexes" war="dist"/>
+    </target>
+
+</project>

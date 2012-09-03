@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ivysettings>
+	<settings defaultResolver="nexus.me.vgv.me"/>
+	<resolvers>
+		<ibiblio name="nexus.me.vgv.me" m2compatible="true" checksums=""
+				 root="http://nexus.me.vgv.me/content/groups/public/"/>
+	</resolvers>
+</ivysettings>
