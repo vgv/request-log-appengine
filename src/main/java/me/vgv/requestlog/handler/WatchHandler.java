@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)
@@ -55,7 +56,12 @@ public class WatchHandler implements Handler {
         item.append("</div>");
 
         item.append("<div class='body'>");
-        item.append(response.getParameters());
+        for (Map.Entry<String, List<String>> entry : response.getParameters().entrySet()) {
+			String parameterName = entry.getKey();
+			for (String parameterValue : entry.getValue()) {
+				item.append(parameterName).append("=").append(parameterValue).append("<br/>");
+			}
+		}
         item.append("</div>");
 
         return item.toString();
